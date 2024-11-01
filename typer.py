@@ -1,10 +1,19 @@
 import curses
 import time
 import os
+import pyfiglet
 
+# Fungsi untuk menampilkan judul besar
+def display_title():
+    title = pyfiglet.figlet_format("HACKER TYPER")
+    subtitle = "By ZeroMAN555"
+    print(title)
+    print(subtitle)
+    print("=" * 30)  # Garis pemisah
+    
 # Fungsi utama untuk menampilkan simulasi editor nano dengan efek ketikan otomatis
 def nano_editor_simulation(stdscr, text, file_name="untitled.txt"):
-    curses.curs_set(0)  # Menyembunyikan kursor untuk efek sinematik
+    curses.curs_set(0)  # Menyembunyikan kursor asli untuk efek sinematik
     stdscr.clear()
     
     # Mendapatkan ukuran layar terminal
@@ -30,9 +39,10 @@ def nano_editor_simulation(stdscr, text, file_name="untitled.txt"):
 
     # Mengetik otomatis seluruh teks
     line_idx, char_idx = 0, 0
+
     while line_idx < len(lines):
+        # Menambahkan karakter satu per satu untuk efek "ketikan"
         if char_idx < len(lines[line_idx]):
-            # Menambahkan karakter satu per satu untuk efek "ketikan"
             typed_lines[line_idx] += lines[line_idx][char_idx]
             row_to_display = line_idx - offset
             if 0 <= row_to_display < view_height:
@@ -63,8 +73,15 @@ def nano_editor_simulation(stdscr, text, file_name="untitled.txt"):
             else:
                 stdscr.addstr(i + 1, 0, " " * width)
 
+        # Menampilkan kotak (kursor) di akhir teks yang sedang diketik
+        if line_idx < len(lines):
+            cursor_row = line_idx - offset + 1
+            cursor_col = len(typed_lines[line_idx]) % width
+            if 0 <= cursor_row < view_height:
+                stdscr.addstr(cursor_row, cursor_col, "█", curses.A_REVERSE)  # Kursor tetap di ujung teks
+
         stdscr.refresh()
-        time.sleep(0.02)  # Jeda ketikan otomatis
+        time.sleep(0.02)  # Jeda ketikan otomatis untuk efek yang lebih cepat dan responsif
 
 # Fungsi untuk menampilkan editor nano dengan kode yang dimuat
 def display_code(code_text, file_name="untitled.txt"):
@@ -72,6 +89,7 @@ def display_code(code_text, file_name="untitled.txt"):
 
 # Fungsi utama untuk menjalankan program
 def main():
+    display_title()
     print("Pilih metode input kode:")
     print("1. Masukkan kode secara manual")
     print("2. Muat kode dari file")
@@ -108,4 +126,3 @@ def main():
 # Memulai program utama
 if __name__ == "__main__":
     main()
-
