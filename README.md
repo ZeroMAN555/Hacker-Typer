@@ -11,11 +11,10 @@ Simulasi editor **nano** dalam Python menggunakan `curses` untuk efek visual yan
 - **Pengisian Otomatis dari File**: Muat kode langsung dari file eksternal atau masukkan kode secara manual.
 
 ## Cara Menggunakan
-**Install**
-```bash
-pip install -r requirements.txt```
+1. **Install**:
+   ```bash
+   pip install -r requirements.txt
 
-## Cara Menggunakan
-1. **Jalankan Program**:
+2. **Usage**:
    ```bash
    python3 typer.py
