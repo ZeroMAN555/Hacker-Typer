@@ -13,7 +13,7 @@ Simulasi editor **nano** dalam Python menggunakan `curses` untuk efek visual yan
 ## Cara Menggunakan
 **Install**
 ```bash
-pip install -r requirements.txt
+pip install -r requirements.txt```
 
 ## Cara Menggunakan
 1. **Jalankan Program**:
