@@ -10,17 +10,17 @@ def display_title():
     print(title)
     print(subtitle)
     print("=" * 30)  # Garis pemisah
-    
+
 # Fungsi utama untuk menampilkan simulasi editor nano dengan efek ketikan otomatis
 def nano_editor_simulation(stdscr, text, file_name="untitled.txt"):
     curses.curs_set(0)  # Menyembunyikan kursor asli untuk efek sinematik
     stdscr.clear()
-    
+
     # Mendapatkan ukuran layar terminal
     height, width = stdscr.getmaxyx()
     view_height = height - 3  # Area yang terlihat untuk kode (mengurangi header dan footer)
     lines = text.splitlines()  # Memisahkan teks menjadi baris-baris
-    
+
     # Header dan footer nano-style
     header = f" GNU nano 5.8: {file_name} "
     status_bar = f" File: {file_name}                          Modified    "
@@ -41,29 +41,32 @@ def nano_editor_simulation(stdscr, text, file_name="untitled.txt"):
     line_idx, char_idx = 0, 0
 
     while line_idx < len(lines):
-        # Menambahkan karakter satu per satu untuk efek "ketikan"
-        if char_idx < len(lines[line_idx]):
-            typed_lines[line_idx] += lines[line_idx][char_idx]
-            row_to_display = line_idx - offset
-            if 0 <= row_to_display < view_height:
-                stdscr.addstr(row_to_display + 1, 0, typed_lines[line_idx][:width])
-            char_idx += 1
-        else:
-            # Lanjut ke baris berikutnya jika karakter pada baris selesai
-            char_idx = 0
-            line_idx += 1
-            if line_idx >= offset + view_height:
-                offset += 1
-                max_offset = max(0, len(lines) - view_height)
-
-        # Menangani input scroll pengguna
+        # Menangani input pengguna
         key = stdscr.getch()
-        if key == curses.KEY_UP and offset > 0:
+
+        if key == curses.KEY_BACKSPACE or key == 127:  # Backspace untuk menghapus karakter
+            if char_idx > 0:
+                char_idx -= 1
+                typed_lines[line_idx] = typed_lines[line_idx][:-1]
+            elif line_idx > 0:  # Pindah ke baris sebelumnya jika di awal baris
+                line_idx -= 1
+                char_idx = len(typed_lines[line_idx])
+        elif key == curses.KEY_UP and offset > 0:  # Scroll ke atas
             offset -= 1
-        elif key == curses.KEY_DOWN and offset < max_offset:
+        elif key == curses.KEY_DOWN and offset < max_offset:  # Scroll ke bawah
             offset += 1
         elif key == ord('q'):  # Tekan 'q' untuk keluar
             break
+        else:
+            # Menambahkan karakter secara normal
+            if char_idx < len(lines[line_idx]):
+                typed_lines[line_idx] += lines[line_idx][char_idx]
+                char_idx += 1
+            else:
+                char_idx = 0
+                line_idx += 1
+                if line_idx >= len(lines):
+                    break
 
         # Menampilkan teks berdasarkan posisi offset
         for i in range(view_height):
